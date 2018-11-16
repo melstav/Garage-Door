@@ -1,0 +1,46 @@
+This process was followed on both a Raspberry Pi and an x86 server running Ubuntu.
+
+** OpenHab is a java application, so you will need a JRE. OpenJRE will work, but OpenHab runs REALLY slow under it. You're better off using either Oracle's JRE or IBM's JRE. (you may substitute JDK for JRE)
+* sudo apt-get install ibm-java80-jdk
+* wget -qO - 'https://bintray.com/user/downloadSubjectPublicKey?username=openhab' | sudo apt-key add -
+* sudo apt-get install apt-transport-https
+* echo 'deb https://dl.bintray.com/openhab/apt-repo2 stable main' | sudo tee /etc/apt/sources.list.d/openhab2.list
+* sudo apt-get update
+* sudo apt-get install openhab2 openhab2-addons
+* sudo apt-get install mosquitto
+* to debug potential connection issues, place logging.conf into /etc/mosquitto/conf.d/ -- This is purely optional. If you've already got mosquitto working correctly, you can skip this step unless you need to debug issues with either openhab or the device connecting to the MQTT service.
+* restart mosquitto
+* install mosquitto-clients
+* test operation of mosquitto with mosquitto_sub and mosquitto_pub in separate terminal windows, using non-authenticated connections.
+* sudo /bin/systemctl daemon-reload
+* sudo /bin/systemctl enable openhab2.service
+* sudo /bin/systemctl start openhab2.service
+* Start openhab
+* Select standard Interface
+* Select Paper UI
+* Install Add Ons 
+	-> Actions -> MQTT Action
+	-> Bindings-> MQTT Binding
+	-> Bindings-> Z-Wave Binding
+* Inbox -> Add -> Z-Wave Serial Interface
+	-> Set Serial Port to /dev/ttyACM0
+* add openhab user to dialout group in /etc/group
+* restart openhab
+* Inbox -> Add -> Z-Wave Node 2
+	Rename device to "Garage Door"
+* *NOTE* You will have to remove and replace the battery in the sensor in order for it to send the info packet that will tell openhab what kind of device it is and what interfaces it provides.
+* Configuration -> Things -> Garage Door
+	Under Channels, click the circle next to Binary Sensor.
+	Click the drop-down for "Item to Link" and select "Create new Item."
+	Change name if desired, and click LINK
+* Go to Base URL for OpenHab and switch to HABPanel.
+* Create a new panel and a new dummy widget.
+* Configure widget to display the value of the created Item.
+* Save the widget. Save the panel. Run the panel.
+* Move the sensor back and forth between open and closed positions. Ensure that the value reported by panel widget changes appropriately. In mine, it is OFF in closed position and ON in open.
+* sudo update-rc.d openhab2 defaults
+* In /etc/openhab2/services update mqtt.cfg and mqtt-eventbus.cfg - The versions used when it was verified to work are in this directory.
+	* In mqtt-eventbus.cfg, for publishing the status of a sensor so it can be accessed by a remote display device, only the broker and statePublishTopic directives are necessary.
+	* commandPublishTopic is for if we want to control the remote device via mqtt from openhab.
+	* stateSubscribeTopic is for if we want to get the status of a remote device (like a door sensor or washer/dryer activity sensor) over mqtt because it  does not have a direct integration with openhab.
+	* commandSubscribeTopic would be for receiving commands from remote devices so they could be processed by openhab or forwarded to a thing.
