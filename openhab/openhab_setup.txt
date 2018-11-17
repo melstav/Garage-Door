@@ -1,4 +1,5 @@
-This process was followed on both a Raspberry Pi and an x86 server running Ubuntu.
+This process was tested on both a Raspberry Pi and an x86 server running Ubuntu. Current running implementation is on an x86 server, since I'm not quite convinced that I'm comfortable making an rPi a part of my permanent infrastructure.
+------------------------------------------------------------------------------
 
 ** OpenHab is a java application, so you will need a JRE. OpenJRE will work, but OpenHab runs REALLY slow under it. You're better off using either Oracle's JRE or IBM's JRE. (you may substitute JDK for JRE)
 * sudo apt-get install ibm-java80-jdk
