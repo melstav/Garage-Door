@@ -10,8 +10,8 @@
 
 function handle_mqtt_connerror(client, reason)
 	print("MQTT Connection to server failed. Reason code was: ",reason)
-	print("Retrying in 10 seconds.")
-	tmr.create():alarm(10 * 1000, tmr.ALARM_SINGLE, do_mqtt_connect)
+	print("Retrying in 1 seconds.")
+	tmr.create():alarm(1 * 1000, tmr.ALARM_SINGLE, do_mqtt_connect)
 end
 
 function do_mqtt_connect()

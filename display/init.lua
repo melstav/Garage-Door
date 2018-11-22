@@ -8,6 +8,7 @@
 -- bring in our module files
 require("leds")
 require("mymqtt")
+require("mywifi")
 
 -- Declare additional functions
 function doorOpen()
@@ -18,6 +19,11 @@ end
 function doorClosed()
 	setGreen(1)
 	setRed(0)
+end
+
+function notConnected()
+	setGreen(1)
+	setRed(1)
 end
 
 function onMessage(client, topic, message)
@@ -45,9 +51,19 @@ pinLEDRed = 5
 pinLEDGreen = 7
 
 ------------------------------------------------------------------------------
+-- Set up our MQTT client and tie in the message callback
+------------------------------------------------------------------------------
+m = mqtt.Client("GarageIndicator", 120)
+m:on("message", onMessage)
+--------------------
+-- We don't set up the connection here because we do it in the IP callback
+--------------------
+-- do_mqtt_connect()
+
+------------------------------------------------------------------------------
 -- call initialization and run.
 ------------------------------------------------------------------------------
 leds_enable()
-m = mqtt.Client("GarageIndicator", 120)
-m:on("message", onMessage)
-do_mqtt_connect()
+notConnected()
+wifi.sta.connect()
+
