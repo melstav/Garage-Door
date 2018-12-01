@@ -1,7 +1,11 @@
 -- This is the main bootstrap file for the garage door sensor receiver project.
 -- file: init.lua
 -- created 11/04/2018 barryc
-
+-- modified 11/mumble/2018 barryc
+-- 	add event handlers for connecting/disconnecting from wifi.
+-- modified 12/1/2018 barryc
+--	add event handler for disconnecting from MQTT server without being 
+--	disconnected from wifi.
 -- We are going to assume that the WiFi settings have already been set, saved,
 -- and are still valid. 
 
@@ -35,6 +39,11 @@ function onMessage(client, topic, message)
 	end
 end
 
+function onMQTTDisconnect(client)
+		notConnected()
+		do_mqtt_connect()
+end
+
 ------------------------------------------------------------------------------
 -- Declare details of the server and the topic we want to connect to
 ------------------------------------------------------------------------------
@@ -51,10 +60,12 @@ pinLEDRed = 5
 pinLEDGreen = 7
 
 ------------------------------------------------------------------------------
--- Set up our MQTT client and tie in the message callback
+-- Set up our MQTT client and tie in the message and offline callbacks
 ------------------------------------------------------------------------------
 m = mqtt.Client("GarageIndicator", 120)
 m:on("message", onMessage)
+m:on("offline", onMQTTDisconnect)
+
 --------------------
 -- We don't set up the connection here because we do it in the IP callback
 --------------------
