@@ -32,7 +32,7 @@ end
 
 function onMessage(client, topic, message)
 	print("TOPIC:", topic, "Message:", message)
-	if (message == "ON") then
+	if ((message == "ON") or (message == "1")) then
 		doorOpen()
 	else
 		doorClosed()

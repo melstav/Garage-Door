@@ -9,7 +9,7 @@ This process was tested on both a Raspberry Pi and an x86 server running Ubuntu.
 * sudo apt-get update
 * sudo apt-get install openhab2 openhab2-addons
 * sudo apt-get install mosquitto
-* to debug potential connection issues, place logging.conf into /etc/mosquitto/conf.d/ -- This is purely optional. If you've already got mosquitto working correctly, you can skip this step unless you need to debug issues with either openhab or the device connecting to the MQTT service.
+* to debug potential connection issues, place logging.conf into /etc/mosquitto/conf.d/ -- This is purely optional. If you've already got mosquitto working correctly, you can skip this step unless you need to debug issues with either openhab or the device connecting to the MQTT service. (You'll find this file under _oldfiles)
 * restart mosquitto
 * install mosquitto-clients
 * test operation of mosquitto with mosquitto_sub and mosquitto_pub in separate terminal windows, using non-authenticated connections.
@@ -20,8 +20,8 @@ This process was tested on both a Raspberry Pi and an x86 server running Ubuntu.
 * Select standard Interface
 * Select Paper UI
 * Install Add Ons 
-	-> Actions -> MQTT Action
 	-> Bindings-> MQTT Binding
+	-> Persistence -> MQTT Persistence
 	-> Bindings-> Z-Wave Binding
 * Inbox -> Add -> Z-Wave Serial Interface
 	-> Set Serial Port to /dev/ttyACM0
@@ -40,8 +40,5 @@ This process was tested on both a Raspberry Pi and an x86 server running Ubuntu.
 * Save the widget. Save the panel. Run the panel.
 * Move the sensor back and forth between open and closed positions. Ensure that the value reported by panel widget changes appropriately. In mine, it is OFF in closed position and ON in open.
 * sudo update-rc.d openhab2 defaults
-* In /etc/openhab2/services update mqtt.cfg and mqtt-eventbus.cfg - The versions used when it was verified to work are in this directory.
-	* In mqtt-eventbus.cfg, for publishing the status of a sensor so it can be accessed by a remote display device, only the broker and statePublishTopic directives are necessary.
-	* commandPublishTopic is for if we want to control the remote device via mqtt from openhab.
-	* stateSubscribeTopic is for if we want to get the status of a remote device (like a door sensor or washer/dryer activity sensor) over mqtt because it  does not have a direct integration with openhab.
-	* commandSubscribeTopic would be for receiving commands from remote devices so they could be processed by openhab or forwarded to a thing.
+* In /etc/openhab2/services update mqtt.cfg and mqtt-persistence.cfg - The versions used when it was verified to work are in this directory.
+* The file /etc/openhab2/persistence/mqtt.persist specifies the available schedules for updating and the default update schedule. The update schedule can be overridden on a device-by-device basis.
